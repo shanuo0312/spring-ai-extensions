@@ -93,8 +93,17 @@ public class DashScopeEmbeddingAutoConfiguration {
 			.workSpaceId(resolved.workspaceId())
 			.restClientBuilder(restClientBuilder)
 			.responseErrorHandler(responseErrorHandler)
-			.embeddingsPath(resolved.embeddingsPath())
+			.embeddingsPath(getEmbeddingsPath(embeddingProperties))
 			.build();
+	}
+
+	private String getEmbeddingsPath(DashScopeEmbeddingProperties embeddingProperties) {
+		// Priority: options level > properties level > default
+		String embeddingsPath = embeddingProperties.getOptions().getEmbeddingsPath();
+		if (embeddingsPath != null) {
+			return embeddingsPath;
+		}
+		return embeddingProperties.getEmbeddingsPath();
 	}
 
 }

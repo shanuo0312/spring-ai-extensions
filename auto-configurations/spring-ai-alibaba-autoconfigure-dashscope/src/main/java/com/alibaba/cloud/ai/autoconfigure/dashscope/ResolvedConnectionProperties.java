@@ -27,8 +27,6 @@ public record ResolvedConnectionProperties(
 		String baseUrl,
 		String apiKey,
 		String workspaceId,
-		MultiValueMap<String, String> headers,
-		String completionsPath,
-		String embeddingsPath
+		MultiValueMap<String, String> headers
 ) { }
 // @formatter:on

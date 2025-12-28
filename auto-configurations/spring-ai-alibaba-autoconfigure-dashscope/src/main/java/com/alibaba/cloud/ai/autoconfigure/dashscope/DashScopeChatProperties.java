@@ -43,19 +43,27 @@ public class DashScopeChatProperties extends DashScopeParentProperties {
 	 */
 	private boolean enabled = true;
 
+	private String completionsPath;
+
 	@NestedConfigurationProperty
 	private DashScopeChatOptions options = DashScopeChatOptions.builder()
 		.model(DEFAULT_DEPLOYMENT_NAME)
 		.build();
 
 	public DashScopeChatOptions getOptions() {
-
 		return this.options;
 	}
 
 	public void setOptions(DashScopeChatOptions options) {
-
 		this.options = options;
+	}
+
+	public String getCompletionsPath() {
+		return completionsPath;
+	}
+
+	public void setCompletionsPath(String completionsPath) {
+		this.completionsPath = completionsPath;
 	}
 
 	public boolean isEnabled() {

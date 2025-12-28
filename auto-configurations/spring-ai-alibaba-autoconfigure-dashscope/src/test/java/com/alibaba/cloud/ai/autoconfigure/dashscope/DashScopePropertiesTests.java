@@ -96,40 +96,38 @@ public class DashScopePropertiesTests {
 	}
 
 	@Test
-	public void chatCompletionsPathOverridesParent() {
+	public void chatCompletionsPathOptionsOverridesProperties() {
 		new ApplicationContextRunner().withPropertyValues(
 		// @formatter:off
 						"spring.ai.dashscope.base-url=TEST_BASE_URL",
 						"spring.ai.dashscope.api-key=abc123_test",
-						"spring.ai.dashscope.completions_path=/default/v1/chat/completions",
-						"spring.ai.dashscope.chat.options.completions_path=/custom/v1/chat/completions")
+						"spring.ai.dashscope.chat.completions_path=/properties/v1/chat/completions",
+						"spring.ai.dashscope.chat.options.completions_path=/options/v1/chat/completions")
 				// @formatter:on
 			.withConfiguration(AutoConfigurations.of(DashScopeChatAutoConfiguration.class))
 			.run(context -> {
 				var chatProperties = context.getBean(DashScopeChatProperties.class);
-				var connectionProperties = context.getBean(DashScopeConnectionProperties.class);
 
-				assertThat(connectionProperties.getCompletionsPath()).isEqualTo("/default/v1/chat/completions");
-				assertThat(chatProperties.getOptions().getCompletionsPath()).isEqualTo("/custom/v1/chat/completions");
+				assertThat(chatProperties.getCompletionsPath()).isEqualTo("/properties/v1/chat/completions");
+				assertThat(chatProperties.getOptions().getCompletionsPath()).isEqualTo("/options/v1/chat/completions");
 			});
 	}
 
 	@Test
-	public void embeddingEmbeddingsPathOverridesParent() {
+	public void embeddingEmbeddingsPathOptionsOverridesProperties() {
 		new ApplicationContextRunner().withPropertyValues(
 		// @formatter:off
 						"spring.ai.dashscope.base-url=TEST_BASE_URL",
 						"spring.ai.dashscope.api-key=abc123_test",
-						"spring.ai.dashscope.embeddings_path=/default/v1/embeddings",
-						"spring.ai.dashscope.embedding.options.embeddings_path=/custom/v1/embeddings")
+						"spring.ai.dashscope.embedding.embeddings_path=/properties/v1/embeddings",
+						"spring.ai.dashscope.embedding.options.embeddings_path=/options/v1/embeddings")
 				// @formatter:on
 			.withConfiguration(AutoConfigurations.of(DashScopeEmbeddingAutoConfiguration.class))
 			.run(context -> {
 				var embeddingProperties = context.getBean(DashScopeEmbeddingProperties.class);
-				var connectionProperties = context.getBean(DashScopeConnectionProperties.class);
 
-				assertThat(connectionProperties.getEmbeddingsPath()).isEqualTo("/default/v1/embeddings");
-				assertThat(embeddingProperties.getOptions().getEmbeddingsPath()).isEqualTo("/custom/v1/embeddings");
+				assertThat(embeddingProperties.getEmbeddingsPath()).isEqualTo("/properties/v1/embeddings");
+				assertThat(embeddingProperties.getOptions().getEmbeddingsPath()).isEqualTo("/options/v1/embeddings");
 			});
 	}
 
