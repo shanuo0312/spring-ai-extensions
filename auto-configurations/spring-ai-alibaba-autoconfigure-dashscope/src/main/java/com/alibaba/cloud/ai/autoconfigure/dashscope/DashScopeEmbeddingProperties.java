@@ -31,6 +31,8 @@ public class DashScopeEmbeddingProperties extends DashScopeParentProperties {
   /** Enable DashScope embedding client. */
   private boolean enabled = true;
 
+  private String embeddingsPath;
+
   private MetadataMode metadataMode = MetadataMode.EMBED;
 
   @NestedConfigurationProperty
@@ -59,5 +61,13 @@ public class DashScopeEmbeddingProperties extends DashScopeParentProperties {
 
   public void setEnabled(boolean enabled) {
     this.enabled = enabled;
+  }
+
+  public String getEmbeddingsPath() {
+    return embeddingsPath;
+  }
+
+  public void setEmbeddingsPath(String embeddingsPath) {
+    this.embeddingsPath = embeddingsPath;
   }
 }

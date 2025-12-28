@@ -136,8 +136,17 @@ public class DashScopeChatAutoConfiguration {
 					.workSpaceId(resolved.workspaceId())
 					.restClientBuilder(restClientBuilder)
 					.responseErrorHandler(responseErrorHandler)
-					.completionsPath(resolved.completionsPath())
+					.completionsPath(getCompletionsPath(chatProperties))
 					.build();
+		}
+
+		private String getCompletionsPath(DashScopeChatProperties chatProperties) {
+			// Priority: options level > properties level > default
+			String completionsPath = chatProperties.getOptions().getCompletionsPath();
+			if (completionsPath != null) {
+				return completionsPath;
+			}
+			return chatProperties.getCompletionsPath();
 		}
 }
 // @formatter:on
