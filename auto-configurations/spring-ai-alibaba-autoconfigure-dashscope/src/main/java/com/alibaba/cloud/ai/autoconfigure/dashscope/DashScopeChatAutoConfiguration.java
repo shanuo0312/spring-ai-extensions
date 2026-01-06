@@ -17,6 +17,7 @@ package com.alibaba.cloud.ai.autoconfigure.dashscope;
 
 import com.alibaba.cloud.ai.dashscope.api.DashScopeApi;
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatModel;
+import com.alibaba.cloud.ai.dashscope.common.DashScopeApiConstants;
 import com.alibaba.cloud.ai.model.SpringAIAlibabaModels;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.ai.chat.observation.ChatModelObservationConvention;
@@ -146,7 +147,10 @@ public class DashScopeChatAutoConfiguration {
 			if (completionsPath != null) {
 				return completionsPath;
 			}
-			return chatProperties.getCompletionsPath();
+            if(chatProperties.getCompletionsPath() != null) {
+                return chatProperties.getCompletionsPath();
+            }
+			return DashScopeApiConstants.TEXT_GENERATION_RESTFUL_URL;
 		}
 }
 // @formatter:on
