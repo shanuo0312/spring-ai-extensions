@@ -17,6 +17,7 @@
 package com.alibaba.cloud.ai.autoconfigure.dashscope;
 
 import com.alibaba.cloud.ai.dashscope.api.DashScopeApi;
+import com.alibaba.cloud.ai.dashscope.common.DashScopeApiConstants;
 import com.alibaba.cloud.ai.dashscope.embedding.DashScopeEmbeddingModel;
 import com.alibaba.cloud.ai.model.SpringAIAlibabaModels;
 import io.micrometer.observation.ObservationRegistry;
@@ -103,7 +104,10 @@ public class DashScopeEmbeddingAutoConfiguration {
 		if (embeddingsPath != null) {
 			return embeddingsPath;
 		}
-		return embeddingProperties.getEmbeddingsPath();
+		if(embeddingProperties.getEmbeddingsPath() != null) {
+            return embeddingProperties.getEmbeddingsPath();
+        }
+        return DashScopeApiConstants.TEXT_EMBEDDING_RESTFUL_URL;
 	}
 
 }
