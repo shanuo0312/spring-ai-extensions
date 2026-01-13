@@ -17,7 +17,6 @@
 package com.alibaba.cloud.ai.autoconfigure.dashscope;
 
 import com.alibaba.cloud.ai.dashscope.api.DashScopeApi;
-import com.alibaba.cloud.ai.dashscope.common.DashScopeApiConstants;
 import com.alibaba.cloud.ai.dashscope.embedding.DashScopeEmbeddingModel;
 import com.alibaba.cloud.ai.model.SpringAIAlibabaModels;
 import io.micrometer.observation.ObservationRegistry;
@@ -88,26 +87,14 @@ public class DashScopeEmbeddingAutoConfiguration {
 
 		return DashScopeApi.builder()
 			.apiKey(resolved.apiKey())
+            .workSpaceId(resolved.workspaceId())
 			.headers(resolved.headers())
 			.baseUrl(resolved.baseUrl())
+			.embeddingsPath(embeddingProperties.getEmbeddingsPath())
 			.webClientBuilder(webClientBuilder)
-			.workSpaceId(resolved.workspaceId())
 			.restClientBuilder(restClientBuilder)
 			.responseErrorHandler(responseErrorHandler)
-			.embeddingsPath(getEmbeddingsPath(embeddingProperties))
 			.build();
-	}
-
-	private String getEmbeddingsPath(DashScopeEmbeddingProperties embeddingProperties) {
-		// Priority: options level > properties level > default
-		String embeddingsPath = embeddingProperties.getOptions().getEmbeddingsPath();
-		if (embeddingsPath != null) {
-			return embeddingsPath;
-		}
-		if(embeddingProperties.getEmbeddingsPath() != null) {
-            return embeddingProperties.getEmbeddingsPath();
-        }
-        return DashScopeApiConstants.TEXT_EMBEDDING_RESTFUL_URL;
 	}
 
 }

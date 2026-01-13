@@ -17,11 +17,13 @@ package com.alibaba.cloud.ai.autoconfigure.dashscope;
 
 import java.util.List;
 
+import com.alibaba.cloud.ai.dashscope.api.DashScopeApi;
 import com.alibaba.cloud.ai.dashscope.api.DashScopeAudioSpeechApi;
 import com.alibaba.cloud.ai.dashscope.api.DashScopeAudioTranscriptionApi;
 import com.alibaba.cloud.ai.dashscope.audio.DashScopeAudioTranscriptionModel;
 import com.alibaba.cloud.ai.dashscope.audio.DashScopeAudioSpeechModel;
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatModel;
+import com.alibaba.cloud.ai.dashscope.common.DashScopeApiConstants;
 import com.alibaba.cloud.ai.dashscope.embedding.DashScopeEmbeddingModel;
 import com.alibaba.cloud.ai.dashscope.image.DashScopeImageModel;
 import com.alibaba.cloud.ai.dashscope.spec.DashScopeApiSpec;
@@ -43,93 +45,69 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DashScopePropertiesTests {
 
-	@Test
-	public void chatPropertiesWithCompletionsPath() {
-		new ApplicationContextRunner().withPropertyValues(
-		// @formatter:off
-						"spring.ai.dashscope.base-url=TEST_BASE_URL",
-						"spring.ai.dashscope.api-key=abc123_test",
-						"spring.ai.dashscope.chat.options.model=MODEL_CUSTOM",
-						"spring.ai.dashscope.chat.options.temperature=0.80",
-						"spring.ai.dashscope.chat.options.completions_path=/custom/v1/chat/completions")
-				// @formatter:on
-			.withConfiguration(AutoConfigurations.of(DashScopeChatAutoConfiguration.class))
-			.run(context -> {
-				var chatProperties = context.getBean(DashScopeChatProperties.class);
-				var connectionProperties = context.getBean(DashScopeConnectionProperties.class);
+    @Test
+    public void chatPropertiesWithCompletionsPath() {
+        new ApplicationContextRunner()
+                .withPropertyValues(
+                        "spring.ai.dashscope.api-key=sk-test-123",
+                        "spring.ai.dashscope.chat.completions-path=/custom/v1/chat/completions")
+                .withConfiguration(AutoConfigurations.of(DashScopeChatAutoConfiguration.class))
+                .run(context -> {
+                    var chatProperties = context.getBean(DashScopeChatProperties.class);
+                    var chatModel = context.getBean(DashScopeChatModel.class);
 
-				assertThat(connectionProperties.getApiKey()).isEqualTo("abc123_test");
-				assertThat(connectionProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
+                    assertThat(chatProperties.getCompletionsPath()).isEqualTo("/custom/v1/chat/completions");
+                    assertThat(getCompletionsPathReflect(chatModel)).isEqualTo("/custom/v1/chat/completions");
+                });
+    }
 
-				assertThat(chatProperties.getApiKey()).isNull();
-				assertThat(chatProperties.getBaseUrl()).isNull();
+    @Test
+    public void chatPropertiesDefaultCompletionsPath() {
+        new ApplicationContextRunner()
+                .withPropertyValues("spring.ai.dashscope.api-key=sk-test-123")
+                .withConfiguration(AutoConfigurations.of(DashScopeChatAutoConfiguration.class))
+                .run(context -> {
+                    var chatProperties = context.getBean(DashScopeChatProperties.class);
+                    var chatModel = context.getBean(DashScopeChatModel.class);
 
-				assertThat(chatProperties.getOptions().getModel()).isEqualTo("MODEL_CUSTOM");
-				assertThat(chatProperties.getOptions().getTemperature()).isEqualTo(0.80);
-				assertThat(chatProperties.getOptions().getCompletionsPath()).isEqualTo("/custom/v1/chat/completions");
-			});
-	}
+                    assertThat(chatProperties.getCompletionsPath())
+                            .isEqualTo(DashScopeApiConstants.TEXT_GENERATION_RESTFUL_URL);
+                    assertThat(getCompletionsPathReflect(chatModel))
+                            .isEqualTo(DashScopeApiConstants.TEXT_GENERATION_RESTFUL_URL);
+                });
+    }
 
-	@Test
-	public void embeddingPropertiesWithEmbeddingsPath() {
-		new ApplicationContextRunner().withPropertyValues(
-		// @formatter:off
-						"spring.ai.dashscope.base-url=TEST_BASE_URL",
-						"spring.ai.dashscope.api-key=abc123_test",
-						"spring.ai.dashscope.embedding.options.model=MODEL_CUSTOM",
-						"spring.ai.dashscope.embedding.options.embeddings_path=/custom/v1/embeddings")
-				// @formatter:on
-			.withConfiguration(AutoConfigurations.of(DashScopeEmbeddingAutoConfiguration.class))
-			.run(context -> {
-				var embeddingProperties = context.getBean(DashScopeEmbeddingProperties.class);
-				var connectionProperties = context.getBean(DashScopeConnectionProperties.class);
+    @Test
+    public void embeddingPropertiesWithEmbeddingsPath() {
+        new ApplicationContextRunner()
+                .withPropertyValues(
+                        "spring.ai.dashscope.api-key=sk-test-123",
+                        "spring.ai.dashscope.embedding.embeddings-path=/custom/v1/embeddings")
+                .withConfiguration(AutoConfigurations.of(DashScopeEmbeddingAutoConfiguration.class))
+                .run(context -> {
+                    var embeddingProperties = context.getBean(DashScopeEmbeddingProperties.class);
+                    var embeddingModel = context.getBean(DashScopeEmbeddingModel.class);
 
-				assertThat(connectionProperties.getApiKey()).isEqualTo("abc123_test");
-				assertThat(connectionProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
+                    assertThat(embeddingProperties.getEmbeddingsPath()).isEqualTo("/custom/v1/embeddings");
+                    assertThat(getEmbeddingsPathPathReflect(embeddingModel)).isEqualTo("/custom/v1/embeddings");
+                });
+    }
 
-				assertThat(embeddingProperties.getApiKey()).isNull();
-				assertThat(embeddingProperties.getBaseUrl()).isNull();
+    @Test
+    public void embeddingPropertiesDefaultEmbeddingsPath() {
+        new ApplicationContextRunner()
+                .withPropertyValues("spring.ai.dashscope.api-key=sk-test-123")
+                .withConfiguration(AutoConfigurations.of(DashScopeEmbeddingAutoConfiguration.class))
+                .run(context -> {
+                    var embeddingProperties = context.getBean(DashScopeEmbeddingProperties.class);
+                    var embeddingModel = context.getBean(DashScopeEmbeddingModel.class);
 
-				assertThat(embeddingProperties.getOptions().getModel()).isEqualTo("MODEL_CUSTOM");
-				assertThat(embeddingProperties.getOptions().getEmbeddingsPath()).isEqualTo("/custom/v1/embeddings");
-			});
-	}
-
-	@Test
-	public void chatCompletionsPathOptionsOverridesProperties() {
-		new ApplicationContextRunner().withPropertyValues(
-		// @formatter:off
-						"spring.ai.dashscope.base-url=TEST_BASE_URL",
-						"spring.ai.dashscope.api-key=abc123_test",
-						"spring.ai.dashscope.chat.completions_path=/properties/v1/chat/completions",
-						"spring.ai.dashscope.chat.options.completions_path=/options/v1/chat/completions")
-				// @formatter:on
-			.withConfiguration(AutoConfigurations.of(DashScopeChatAutoConfiguration.class))
-			.run(context -> {
-				var chatProperties = context.getBean(DashScopeChatProperties.class);
-
-				assertThat(chatProperties.getCompletionsPath()).isEqualTo("/properties/v1/chat/completions");
-				assertThat(chatProperties.getOptions().getCompletionsPath()).isEqualTo("/options/v1/chat/completions");
-			});
-	}
-
-	@Test
-	public void embeddingEmbeddingsPathOptionsOverridesProperties() {
-		new ApplicationContextRunner().withPropertyValues(
-		// @formatter:off
-						"spring.ai.dashscope.base-url=TEST_BASE_URL",
-						"spring.ai.dashscope.api-key=abc123_test",
-						"spring.ai.dashscope.embedding.embeddings_path=/properties/v1/embeddings",
-						"spring.ai.dashscope.embedding.options.embeddings_path=/options/v1/embeddings")
-				// @formatter:on
-			.withConfiguration(AutoConfigurations.of(DashScopeEmbeddingAutoConfiguration.class))
-			.run(context -> {
-				var embeddingProperties = context.getBean(DashScopeEmbeddingProperties.class);
-
-				assertThat(embeddingProperties.getEmbeddingsPath()).isEqualTo("/properties/v1/embeddings");
-				assertThat(embeddingProperties.getOptions().getEmbeddingsPath()).isEqualTo("/options/v1/embeddings");
-			});
-	}
+                    assertThat(embeddingProperties.getEmbeddingsPath())
+                            .isEqualTo(DashScopeApiConstants.TEXT_EMBEDDING_RESTFUL_URL);
+                    assertThat(getEmbeddingsPathPathReflect(embeddingModel))
+                            .isEqualTo(DashScopeApiConstants.TEXT_EMBEDDING_RESTFUL_URL);
+                });
+    }
 
 	@Test
 	public void chatProperties() {
@@ -679,5 +657,23 @@ public class DashScopePropertiesTests {
 			});
 
 	}
+
+    private String getCompletionsPathReflect(DashScopeChatModel chatModel) throws NoSuchFieldException, IllegalAccessException {
+        var dashscopeApiField = DashScopeChatModel.class.getDeclaredField("dashscopeApi");
+        dashscopeApiField.setAccessible(true);
+        var dashscopeApi = (DashScopeApi) dashscopeApiField.get(chatModel);
+        var completionsPathField = DashScopeApi.class.getDeclaredField("completionsPath");
+        completionsPathField.setAccessible(true);
+        return (String) completionsPathField.get(dashscopeApi);
+    }
+
+    private String getEmbeddingsPathPathReflect(DashScopeEmbeddingModel embeddingModel) throws NoSuchFieldException, IllegalAccessException {
+        var dashscopeApiField = DashScopeEmbeddingModel.class.getDeclaredField("dashScopeApi");
+        dashscopeApiField.setAccessible(true);
+        var dashscopeApi = (DashScopeApi) dashscopeApiField.get(embeddingModel);
+        var embeddingsPathField = DashScopeApi.class.getDeclaredField("embeddingsPath");
+        embeddingsPathField.setAccessible(true);
+        return (String) embeddingsPathField.get(dashscopeApi);
+    }
 
 }

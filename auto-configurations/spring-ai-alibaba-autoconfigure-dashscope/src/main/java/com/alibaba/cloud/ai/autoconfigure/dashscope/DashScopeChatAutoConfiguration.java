@@ -17,7 +17,6 @@ package com.alibaba.cloud.ai.autoconfigure.dashscope;
 
 import com.alibaba.cloud.ai.dashscope.api.DashScopeApi;
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatModel;
-import com.alibaba.cloud.ai.dashscope.common.DashScopeApiConstants;
 import com.alibaba.cloud.ai.model.SpringAIAlibabaModels;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.ai.chat.observation.ChatModelObservationConvention;
@@ -73,7 +72,6 @@ import static com.alibaba.cloud.ai.autoconfigure.dashscope.DashScopeConnectionUt
 		DashScopeChatProperties.class,
 })
 public class DashScopeChatAutoConfiguration {
-
 
 		@Bean
 		@ConditionalOnMissingBean
@@ -131,26 +129,14 @@ public class DashScopeChatAutoConfiguration {
 
 			return DashScopeApi.builder()
 					.apiKey(resolved.apiKey())
+                    .workSpaceId(resolved.workspaceId())
 					.headers(resolved.headers())
 					.baseUrl(resolved.baseUrl())
+					.completionsPath(chatProperties.getCompletionsPath())
 					.webClientBuilder(webClientBuilder)
-					.workSpaceId(resolved.workspaceId())
 					.restClientBuilder(restClientBuilder)
 					.responseErrorHandler(responseErrorHandler)
-					.completionsPath(getCompletionsPath(chatProperties))
 					.build();
-		}
-
-		private String getCompletionsPath(DashScopeChatProperties chatProperties) {
-			// Priority: options level > properties level > default
-			String completionsPath = chatProperties.getOptions().getCompletionsPath();
-			if (completionsPath != null) {
-				return completionsPath;
-			}
-            if(chatProperties.getCompletionsPath() != null) {
-                return chatProperties.getCompletionsPath();
-            }
-			return DashScopeApiConstants.TEXT_GENERATION_RESTFUL_URL;
 		}
 }
 // @formatter:on

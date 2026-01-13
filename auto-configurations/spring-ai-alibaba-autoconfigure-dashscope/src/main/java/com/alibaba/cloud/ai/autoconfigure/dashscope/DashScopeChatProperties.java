@@ -16,6 +16,7 @@
 package com.alibaba.cloud.ai.autoconfigure.dashscope;
 
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatOptions;
+import com.alibaba.cloud.ai.dashscope.common.DashScopeApiConstants;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -43,7 +44,10 @@ public class DashScopeChatProperties extends DashScopeParentProperties {
 	 */
 	private boolean enabled = true;
 
-	private String completionsPath;
+    /**
+	 * DashScope Chat completions path.
+	 */
+	private String completionsPath = DashScopeApiConstants.TEXT_GENERATION_RESTFUL_URL;
 
 	@NestedConfigurationProperty
 	private DashScopeChatOptions options = DashScopeChatOptions.builder()

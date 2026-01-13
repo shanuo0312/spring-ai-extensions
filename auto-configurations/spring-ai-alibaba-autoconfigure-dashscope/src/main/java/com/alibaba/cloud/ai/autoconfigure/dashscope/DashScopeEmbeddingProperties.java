@@ -16,6 +16,7 @@
 
 package com.alibaba.cloud.ai.autoconfigure.dashscope;
 
+import com.alibaba.cloud.ai.dashscope.common.DashScopeApiConstants;
 import com.alibaba.cloud.ai.dashscope.embedding.DashScopeEmbeddingOptions;
 import org.springframework.ai.document.MetadataMode;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -31,7 +32,10 @@ public class DashScopeEmbeddingProperties extends DashScopeParentProperties {
   /** Enable DashScope embedding client. */
   private boolean enabled = true;
 
-  private String embeddingsPath;
+  /**
+   * DashScope embedding path.
+   */
+  private String embeddingsPath = DashScopeApiConstants.TEXT_EMBEDDING_RESTFUL_URL;
 
   private MetadataMode metadataMode = MetadataMode.EMBED;
 
